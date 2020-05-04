@@ -1,14 +1,42 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
+import Header from './components/Header';
+import ListItem from './components/ListItem'
+import AddItem from './components/AddItem'
+ 
+import uuid from 'uuid-random';
 
 const App = () => {
+  const [items, setItems] = useState([
+    { id: uuid(), text: "Milk" },
+    { id: uuid(), text: "Meat" },
+    { id: uuid(), text: "Eggs" },
+    { id: uuid(), text: "Juice" },
+  ]);
+
+  const deleteItem = (id) => {
+    setItems((prevItems)=>{
+      return prevItems.filter(item => item.id != id)
+    })
+  }
+
+  const addItem = (text) =>{
+    setItems (prevItems => {
+      return [{id: uuid(), text},...items] //  'text: text' same as text
+    })
+  }
+
   return (
     <View style={styles.container} >
-      <Text style={styles.text}>Hello world</Text>
-      <Image
-        source={{ uri: 'http://randomuser.me/api/portraits/men/3.jpg' }}
-        style={styles.img}
-      />
+      <Header title="Shopping List" />
+      <AddItem
+        addItem={addItem}
+       />
+      <FlatList
+        data={items}
+        renderItem={({ item }) => (
+          <ListItem item={item} deleteItem={deleteItem}/>
+        )} />
     </View>
   )
 }
@@ -16,17 +44,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  text: {
-    color: 'darkslateblue',
-    fontSize: 40
-  },
-  img: {
-    width: 100,
-    height: 100,
-    borderRadius: 100/2
+    paddingTop: 60
   }
 })
 
